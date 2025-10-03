@@ -13,7 +13,7 @@
     h1{margin:0 0 8px;font-size:24px}
     h2{margin:6px 0 12px;font-size:18px;color:#334155}
     label{display:block;margin:10px 0 6px}
-    select{padding:10px;border-radius:6px;border:1px solid #e2e8f0;width:100%;margin-bottom:10px}
+    select,input[type=number]{padding:10px;border-radius:6px;border:1px solid #e2e8f0;width:100%;margin-bottom:10px;box-sizing:border-box}
     button{margin-top:12px;padding:10px 14px;border-radius:8px;border:0;background:#0369a1;color:white;cursor:pointer}
     .result{margin-top:14px;padding:12px;background:#f1f5f9;border-radius:8px}
     small{color:#475569}
@@ -27,16 +27,16 @@
   <main class="card" role="main">
     <h1>Exact Age Calculator</h1>
     <h2>Free Online Age Calculator in Years, Months, and Days</h2>
-    <p><small>Enter your birth date to calculate your exact age in years, months, days, weeks, hours, seconds. See your next birthday date, weekday, and zodiac sign.</small></p>
+    <p><small>Enter your birth date to calculate your exact age in years, months, days, weeks, hours, seconds. See your next birthday and zodiac sign.</small></p>
 
     <label for="month">Month</label>
     <select id="month"></select>
 
     <label for="day">Day</label>
-    <select id="day"></select>
+    <input type="number" id="day" min="1" max="31" placeholder="Day">
 
     <label for="year">Year</label>
-    <select id="year"></select>
+    <input type="number" id="year" min="1925" max="2025" placeholder="Year">
 
     <div class="meta">
       <button id="calcBtn">Calculate</button>
@@ -62,11 +62,8 @@
   </main>
 
   <script>
-    // Populate month, day, year dropdowns
+    // Populate month dropdown
     const monthSelect = document.getElementById('month');
-    const daySelect = document.getElementById('day');
-    const yearSelect = document.getElementById('year');
-
     const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     monthNames.forEach((name,i) => {
       let opt = document.createElement('option');
@@ -74,21 +71,6 @@
       opt.textContent = name;
       monthSelect.appendChild(opt);
     });
-
-    for(let i=1;i<=31;i++){
-      let opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = i;
-      daySelect.appendChild(opt);
-    }
-
-    const currentYear = new Date().getFullYear();
-    for(let y=currentYear; y>=currentYear-100; y--){
-      let opt = document.createElement('option');
-      opt.value = y;
-      opt.textContent = y;
-      yearSelect.appendChild(opt);
-    }
 
     // Zodiac calculation
     function zodiacSign(day, month){
@@ -154,15 +136,30 @@
     function updateShareLinks(text){
       document.getElementById('share').hidden = false;
       const encoded = encodeURIComponent(text + " Try it here: https://drubaiduetv.github.io/age-calculator/");
-      document.getElementById('share-whatsapp').href = 
-        `https://api.whatsapp.com/send?text=${encoded}`;
-      document.getElementById('share-twitter').href = 
-        `https://twitter.com/intent/tweet?text=${encoded}`;
-      document.getElementById('share-fb').href = 
-        `https://www.facebook.com/sharer/sharer.php?u=https://drubaiduetv.github.io/age-calculator/&quote=${encoded}`;
+      document.getElementById('share-whatsapp').href = `https://api.whatsapp.com/send?text=${encoded}`;
+      document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?text=${encoded}`;
+      document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=https://drubaiduetv.github.io/age-calculator/&quote=${encoded}`;
     }
 
     // Event listeners
     document.getElementById('calcBtn').addEventListener('click', function(){
-      const day = parseInt(daySelect.value);
-      const month = parseInt(month
+      const day = parseInt(document.getElementById('day').value);
+      const month = parseInt(document.getElementById('month').value);
+      const year = parseInt(document.getElementById('year').value);
+      if(!day || !month || !year){ alert('Please enter day, month, and year'); return; }
+      const dob = new Date(year, month, day);
+      if (dob > new Date()){ alert('Birth date cannot be in the future'); return; }
+      showResult(calculateAgeParts(dob, new Date()));
+    });
+
+    document.getElementById('nowBtn').addEventListener('click', function(){
+      const day = parseInt(document.getElementById('day').value);
+      const month = parseInt(document.getElementById('month').value);
+      const year = parseInt(document.getElementById('year').value);
+      if(!day || !month || !year){ alert('Please enter day, month, and year'); return; }
+      const dob = new Date(year, month, day);
+      showResult(calculateAgeParts(dob, new Date()));
+    });
+  </script>
+</body>
+</html>
