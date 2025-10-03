@@ -3,21 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Age Calculator Online – Calculate Exact Age in Years, Months, Days</title>
-  <meta name="description" content="Free exact age calculator online. Find your age in years, months, days, weeks, hours, seconds. See your next birthday date, weekday, and zodiac sign." />
-  <meta name="keywords" content="age calculator, exact age online, age in days, birthday countdown, next birthday, zodiac calculator" />
+  <title>Free Age Calculator Online – Calculate Exact Age in Years, Months, Days</title>
+  <meta name="description" content="Free exact age calculator online. Calculate your age in years, months, days, weeks, hours, and seconds. See your next birthday date, weekday, and zodiac sign." />
+  <meta name="keywords" content="age calculator, exact age online, calculate age in years months days, birthday countdown, next birthday, zodiac sign calculator" />
   <style>
     :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;line-height:1.4}
     body{display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px;background:#f7fafc;color:#0f172a}
     .card{max-width:720px;width:100%;background:#fff;border-radius:10px;padding:22px;box-shadow:0 6px 22px rgba(15,23,42,0.08)}
-    h1{margin:0 0 8px;font-size:20px}
+    h1{margin:0 0 8px;font-size:24px}
+    h2{margin:6px 0 12px;font-size:18px;color:#334155}
     label{display:block;margin:10px 0 6px}
     input[type=date]{padding:10px;border-radius:6px;border:1px solid #e2e8f0;width:100%}
     button{margin-top:12px;padding:10px 14px;border-radius:8px;border:0;background:#0369a1;color:white;cursor:pointer}
     .result{margin-top:14px;padding:12px;background:#f1f5f9;border-radius:8px}
     small{color:#475569}
     .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-    .donate{margin-top:10px}
+    .donate{margin-top:14px}
     #share a{margin-right:8px;text-decoration:none;color:#0369a1}
     @media(max-width:520px){.card{padding:16px}}
   </style>
@@ -25,7 +26,8 @@
 <body>
   <main class="card" role="main">
     <h1>Exact Age Calculator</h1>
-    <p><small>Enter your birth date to get years, months, days, weeks, hours, zodiac sign and next birthday details.</small></p>
+    <h2>Free Online Age Calculator in Years, Months, and Days</h2>
+    <p><small>Enter your birth date to calculate your exact age in years, months, days, weeks, hours, seconds. See your next birthday date, weekday, and zodiac sign.</small></p>
 
     <label for="dob">Birth date</label>
     <input id="dob" type="date" aria-label="Birth date" required />
@@ -117,13 +119,13 @@
     // Share links
     function updateShareLinks(text){
       document.getElementById('share').hidden = false;
-      const encoded = encodeURIComponent(text + " Try it here: https://yourusername.github.io");
+      const encoded = encodeURIComponent(text + " Try it here: https://drubaiduetv.github.io/age-calculator/");
       document.getElementById('share-whatsapp').href = 
         `https://api.whatsapp.com/send?text=${encoded}`;
       document.getElementById('share-twitter').href = 
         `https://twitter.com/intent/tweet?text=${encoded}`;
       document.getElementById('share-fb').href = 
-        `https://www.facebook.com/sharer/sharer.php?u=https://yourusername.github.io&quote=${encoded}`;
+        `https://www.facebook.com/sharer/sharer.php?u=https://drubaiduetv.github.io/age-calculator/&quote=${encoded}`;
     }
 
     // Event listeners
