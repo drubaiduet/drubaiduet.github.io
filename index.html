@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Exact Age Calculator</title>
-  <meta name="description" content="Free exact age calculator — calculate years, months, days, total days and seconds." />
+  <title>Age Calculator Online – Calculate Exact Age in Years, Months, Days</title>
+  <meta name="description" content="Free exact age calculator online. Find your age in years, months, days, weeks, hours, seconds. See your next birthday date, weekday, and zodiac sign." />
+  <meta name="keywords" content="age calculator, exact age online, age in days, birthday countdown, next birthday, zodiac calculator" />
   <style>
     :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;line-height:1.4}
     body{display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px;background:#f7fafc;color:#0f172a}
@@ -17,13 +18,14 @@
     small{color:#475569}
     .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
     .donate{margin-top:10px}
+    #share a{margin-right:8px;text-decoration:none;color:#0369a1}
     @media(max-width:520px){.card{padding:16px}}
   </style>
 </head>
 <body>
   <main class="card" role="main">
     <h1>Exact Age Calculator</h1>
-    <p><small>Enter your birth date to get years, months, days, total days and seconds.</small></p>
+    <p><small>Enter your birth date to get years, months, days, weeks, hours, zodiac sign and next birthday details.</small></p>
 
     <label for="dob">Birth date</label>
     <input id="dob" type="date" aria-label="Birth date" required />
@@ -35,49 +37,94 @@
 
     <div id="result" class="result" aria-live="polite" hidden></div>
 
+    <div id="share" class="result" hidden>
+      <p>📢 Share your result:</p>
+      <a id="share-whatsapp" target="_blank">WhatsApp</a>
+      <a id="share-twitter" target="_blank">Twitter</a>
+      <a id="share-fb" target="_blank">Facebook</a>
+    </div>
+
     <div class="donate">
       <p><small>If you find this useful, support the site:</small></p>
-      <!-- replace # with your donation / buymeacoffee link -->
+      <!-- replace # with your donation / BuyMeACoffee link -->
       <a href="#" target="_blank" rel="noopener" aria-label="Donate">Buy me a coffee / Donate</a>
     </div>
   </main>
 
   <script>
+    // Zodiac calculation
+    function zodiacSign(day, month){
+      const signs = [
+        ["Capricorn",20],["Aquarius",19],["Pisces",20],
+        ["Aries",20],["Taurus",21],["Gemini",21],
+        ["Cancer",22],["Leo",22],["Virgo",22],
+        ["Libra",23],["Scorpio",22],["Sagittarius",21],
+        ["Capricorn",31]
+      ];
+      return (day <= signs[month-1][1]) ? signs[month-1][0] : signs[month][0];
+    }
+
+    // Age calculation
     function calculateAgeParts(dobDate, ref = new Date()){
       const dob = new Date(dobDate.getFullYear(), dobDate.getMonth(), dobDate.getDate());
       const now = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate());
+
       let years = now.getFullYear() - dob.getFullYear();
       let months = now.getMonth() - dob.getMonth();
       let days = now.getDate() - dob.getDate();
 
       if (days < 0) {
-        // borrow from previous month
-        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); // last day of previous month
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
         days += prevMonth.getDate();
         months -= 1;
       }
-      if (months < 0) {
-        months += 12;
-        years -= 1;
-      }
+      if (months < 0) { months += 12; years -= 1; }
 
-      // totals
       const msDiff = ref - dobDate;
-      const totalDays = Math.floor(msDiff / (1000 * 60 * 60 * 24));
+      const totalDays = Math.floor(msDiff / (1000*60*60*24));
       const totalSeconds = Math.floor(msDiff / 1000);
+      const totalWeeks = Math.floor(totalDays/7);
+      const totalMonths = years*12 + months;
+      const totalHours = Math.floor(msDiff / (1000*60*60));
 
-      return { years, months, days, totalDays, totalSeconds };
+      // next birthday
+      let nextBirthday = new Date(ref.getFullYear(), dobDate.getMonth(), dobDate.getDate());
+      if(nextBirthday < ref){ nextBirthday.setFullYear(ref.getFullYear()+1); }
+      const dayOfWeek = nextBirthday.toLocaleDateString('en-US',{weekday:'long'});
+
+      // zodiac
+      const sign = zodiacSign(dobDate.getDate(), dobDate.getMonth()+1);
+
+      return { years, months, days, totalDays, totalSeconds, totalWeeks, totalMonths, totalHours, nextBirthday, dayOfWeek, sign };
     }
 
+    // Show result
     function showResult(obj){
       const resultDiv = document.getElementById('result');
       resultDiv.hidden = false;
+      const text = `${obj.years} years, ${obj.months} months, ${obj.days} days old.`;
       resultDiv.innerHTML = `
         <strong>${obj.years}</strong> years, <strong>${obj.months}</strong> months, <strong>${obj.days}</strong> days.<br/>
-        <small>Total: <strong>${obj.totalDays.toLocaleString()}</strong> days (~${Math.floor(obj.totalDays/365.25)} years) or <strong>${obj.totalSeconds.toLocaleString()}</strong> seconds.</small>
+        <small>Total: ${obj.totalMonths.toLocaleString()} months | ${obj.totalWeeks.toLocaleString()} weeks | ${obj.totalDays.toLocaleString()} days | ${obj.totalHours.toLocaleString()} hours | ${obj.totalSeconds.toLocaleString()} seconds.</small><br/><br/>
+        🎂 Next birthday: <strong>${obj.nextBirthday.toDateString()}</strong> (${obj.dayOfWeek})<br/>
+        ✨ Zodiac sign: <strong>${obj.sign}</strong>
       `;
+      updateShareLinks(text);
     }
 
+    // Share links
+    function updateShareLinks(text){
+      document.getElementById('share').hidden = false;
+      const encoded = encodeURIComponent(text + " Try it here: https://yourusername.github.io");
+      document.getElementById('share-whatsapp').href = 
+        `https://api.whatsapp.com/send?text=${encoded}`;
+      document.getElementById('share-twitter').href = 
+        `https://twitter.com/intent/tweet?text=${encoded}`;
+      document.getElementById('share-fb').href = 
+        `https://www.facebook.com/sharer/sharer.php?u=https://yourusername.github.io&quote=${encoded}`;
+    }
+
+    // Event listeners
     document.getElementById('calcBtn').addEventListener('click', function(){
       const val = document.getElementById('dob').value;
       if(!val){ alert('Please select your birth date'); return; }
