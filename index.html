@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="google-site-verification" content="BNg63KNY1a--YiPeLn1NpnfiEH8LFzNhByzxRXU8EmI" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Free Age Calculator Online – Calculate Exact Age in Years, Months, Days</title>
@@ -14,7 +13,7 @@
     h1{margin:0 0 8px;font-size:24px}
     h2{margin:6px 0 12px;font-size:18px;color:#334155}
     label{display:block;margin:10px 0 6px}
-    input[type=date]{padding:10px;border-radius:6px;border:1px solid #e2e8f0;width:100%}
+    select{padding:10px;border-radius:6px;border:1px solid #e2e8f0;width:100%;margin-bottom:10px}
     button{margin-top:12px;padding:10px 14px;border-radius:8px;border:0;background:#0369a1;color:white;cursor:pointer}
     .result{margin-top:14px;padding:12px;background:#f1f5f9;border-radius:8px}
     small{color:#475569}
@@ -30,8 +29,14 @@
     <h2>Free Online Age Calculator in Years, Months, and Days</h2>
     <p><small>Enter your birth date to calculate your exact age in years, months, days, weeks, hours, seconds. See your next birthday date, weekday, and zodiac sign.</small></p>
 
-    <label for="dob">Birth date</label>
-    <input id="dob" type="date" aria-label="Birth date" required />
+    <label for="month">Month</label>
+    <select id="month"></select>
+
+    <label for="day">Day</label>
+    <select id="day"></select>
+
+    <label for="year">Year</label>
+    <select id="year"></select>
 
     <div class="meta">
       <button id="calcBtn">Calculate</button>
@@ -57,6 +62,34 @@
   </main>
 
   <script>
+    // Populate month, day, year dropdowns
+    const monthSelect = document.getElementById('month');
+    const daySelect = document.getElementById('day');
+    const yearSelect = document.getElementById('year');
+
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    monthNames.forEach((name,i) => {
+      let opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = name;
+      monthSelect.appendChild(opt);
+    });
+
+    for(let i=1;i<=31;i++){
+      let opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i;
+      daySelect.appendChild(opt);
+    }
+
+    const currentYear = new Date().getFullYear();
+    for(let y=currentYear; y>=currentYear-100; y--){
+      let opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      yearSelect.appendChild(opt);
+    }
+
     // Zodiac calculation
     function zodiacSign(day, month){
       const signs = [
@@ -66,7 +99,7 @@
         ["Libra",23],["Scorpio",22],["Sagittarius",21],
         ["Capricorn",31]
       ];
-      return (day <= signs[month-1][1]) ? signs[month-1][0] : signs[month][0];
+      return (day <= signs[month][1]) ? signs[month][0] : signs[month+1][0];
     }
 
     // Age calculation
@@ -98,7 +131,7 @@
       const dayOfWeek = nextBirthday.toLocaleDateString('en-US',{weekday:'long'});
 
       // zodiac
-      const sign = zodiacSign(dobDate.getDate(), dobDate.getMonth()+1);
+      const sign = zodiacSign(dobDate.getDate(), dobDate.getMonth());
 
       return { years, months, days, totalDays, totalSeconds, totalWeeks, totalMonths, totalHours, nextBirthday, dayOfWeek, sign };
     }
@@ -131,33 +164,5 @@
 
     // Event listeners
     document.getElementById('calcBtn').addEventListener('click', function(){
-      const val = document.getElementById('dob').value;
-      if(!val){ alert('Please select your birth date'); return; }
-      const dob = new Date(val + 'T00:00:00');
-      if (dob > new Date()){ alert('Birth date cannot be in the future'); return; }
-      showResult(calculateAgeParts(dob, new Date()));
-    });
-
-    document.getElementById('nowBtn').addEventListener('click', function(){
-      const val = document.getElementById('dob').value;
-      const refVal = new Date();
-      if(!val){ alert('Please select your birth date'); return; }
-      const dob = new Date(val + 'T00:00:00');
-      showResult(calculateAgeParts(dob, refVal));
-    });
-  </script>
-
-  <!-- Floating Buy Me a Coffee widget -->
-  <script data-name="BMC-Widget" 
-      data-cfasync="false" 
-      src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" 
-      data-id="drubaiduetv" 
-      data-description="Support me on Buy me a coffee!" 
-      data-message="Thank you for visiting! Buy me a coffee?" 
-      data-color="#FF813F" 
-      data-position="Right" 
-      data-x_margin="18" 
-      data-y_margin="18">
-  </script>
-</body>
-</html>
+      const day = parseInt(daySelect.value);
+      const month = parseInt(month
